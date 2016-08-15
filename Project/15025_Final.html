@@ -1,0 +1,161 @@
+<html>
+<head>
+	<script src="VectorNew.js"></script>
+	<script>
+
+	var context,canvas;
+	var bodies  = [];
+	var springs = [];
+	var gravity = 1;
+	var deltaT  = 0.5;
+	var timer   = null;
+	var counter = 0;
+	var alpha = 0.005;
+  	var R1 = (1+alpha*deltaT/2); R2 = (1-alpha*deltaT/2);
+	var criticalDistance = 100;
+
+	window.onload=getCanvas;    
+	function getCanvas(){
+		canvas = document.getElementById("myCanvas");
+		context=canvas.getContext("2d");
+		DrawBox(0,0,canvas.width,canvas.height);
+		createMesh(5,5);
+		canvas.addEventListener('click',pickParticle);
+	}
+
+	function createMesh(n, m){
+		var radius = 10;
+		var space = criticalDistance-10;
+		var x = 10;
+		var y = 10;
+		var fixedFlag = 1;
+		for (var i = 0; i < n; i++) {
+			x += space;
+			y = 10;
+			for (var j = 0; j < m; j++) {
+				y += space;
+				bodies.push(Particle(Vector(x, y),radius,Vector(0,0),Vector(0,0),fixedFlag));
+			}
+		}
+		bodies.forEach(checkForContacts);
+	}
+	
+	function pickParticle(e){
+		console.log("X coords: " + e.x + ", Y coords: " + e.y);
+		var xMin = e.x - criticalDistance/2;
+		var xMax = e.x + criticalDistance/2;
+		var yMin = e.y - criticalDistance/2;
+		var yMax = e.y + criticalDistance/2;
+
+   		for(var i in bodies){
+   			if((bodies[i].pos.x > xMin) && (bodies[i].pos.x < xMax) && (bodies[i].pos.y > yMin) && (bodies[i].pos.y < yMax)){
+     			for(var j in springs){
+     				if(springs[j].masses[0]===bodies[i] || springs[j].masses[1]===bodies[i]){
+     					delete(springs[j]);
+     				}
+     			}
+   			}
+   		}
+	}
+
+	var checkForContacts = function(body,i){ // only check j > i
+		for(var j = i+1;j< bodies.length;j++){
+			if(noSpring(body,bodies[j])){ // check we don't already have a spring
+				if(body.pos.distance(bodies[j].pos) < criticalDistance){
+					springs.push(Spring(body,bodies[j]));
+				}
+			}
+		}
+	};
+
+	var noSpring = function(body0,body1){
+	  var n = springs.length;
+	  for(var i=0;i<n;i++){ // check spring body0 to body1 or body1 to body0
+	    if(springs[i].masses[0]===body0 && springs[i].masses[1]===body1) return false;
+	    if(springs[i].masses[0]===body1 && springs[i].masses[1]===body0) return false;
+	  }
+	  return true;
+	};
+
+	function updateParticles(){
+		counter++;
+		context.clearRect(0, 0, canvas.width,canvas.height);
+		DrawBox(0,0,canvas.width,canvas.height);
+		bodies.forEach(drawBody);
+		springs.forEach(drawSpring);
+		//bodies.forEach(checkForContacts); // if bodies are close put in spring
+	}
+	
+	function Particle(pos,radius,velocity,force,fixedFlag){
+		return {pos:pos,radius:radius,velocity:velocity,
+			force:force,fixedFlag:fixedFlag};
+	}
+
+	// A spring is updated by the motion of its particles
+  	// 2 particles passed in as parameters
+	function Spring(p0,p1){
+	  	var masses = [p0,p1];
+	  	var stiffness = 1 + Math.random()*2;
+	   	var originalLength = p1.pos.minus(p0.pos).abs();
+	   	//originalLength = criticalDistance;
+	   	var color = 'rgb(0,0,200)';
+	  	return {masses:masses, stiffness:stiffness, originalLength:originalLength, color:color};
+	}
+
+	function drawBody(body){
+		DrawCircle(body.pos.x,body.pos.y,body.radius);
+	}
+
+	function drawSpring(spring){
+		DrawLine(spring.masses[0].pos,spring.masses[1].pos,spring.color);
+	}
+
+	function DrawCircle(x,y,radius){
+		context.fillStyle = 'rgba(255, 0, 0, 0.6)';
+		context.beginPath();
+		context.arc(x, y, radius, 0, Math.PI*2, true);
+		context.closePath();
+		context.fill();
+	}
+
+	function DrawBox(x,y,width,height){
+		context.beginPath();
+		context.rect(x,y,width,height);
+		context.stroke();
+		context.closePath();
+	}
+
+	function DrawLine(pos0,pos1,color){
+	  context.strokeStyle = color; // red
+	  context.fillStyle   = color; // blue
+	  context.lineWidth   = 2;
+	  context.beginPath();
+	  context.moveTo(pos0.x,pos0.y);
+	  context.lineTo(pos1.x,pos1.y);
+	  context.stroke();
+	  context.closePath();
+	}
+
+	function RunPhysics(){
+		timer = setInterval(updateParticles,20);
+  	}
+  	
+  	function ResetTimer(){
+	    if(timer!== null){
+	      clearInterval(timer); 
+	      timer = null;
+	    }
+  	}
+
+</script>
+</head>
+<body>
+<div>
+    <input type="button" value="Start" onclick= "RunPhysics()" />
+    <input type="button" value="Stop"  onclick= "ResetTimer()" />
+</div>
+<div>
+	<canvas id="myCanvas" width="800" height="600" > </canvas>
+</div>
+</body>
+</html>

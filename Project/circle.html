@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Circles</title>
+    <style>
+      html, body, #canvas-map {
+        height: 480px;
+        width: 640px;
+        margin: 0px;
+        padding:10px
+      }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true"></script>
+    <script>
+// This example creates circles on the map, representing
+// populations in North America.
+
+// First, create an object containing LatLng and population for each city.
+var citymap = {};
+
+citymap['chicago'] = {
+  center: new google.maps.LatLng(41.878113, -87.629798),
+  population: 2714856
+};
+citymap['newyork'] = {
+  center: new google.maps.LatLng(40.714352, -74.005973),
+  population: 8405837
+};
+citymap['losangeles'] = {
+  center: new google.maps.LatLng(34.052234, -118.243684),
+  population: 3857799
+};
+citymap['vancouver'] = {
+  center: new google.maps.LatLng(49.25, -123.1),
+  population: 603502
+};
+
+var cityCircle;
+var marker;
+var flightPlanCoordinates =[];
+var flightPath;
+var canvas;
+var context;
+
+function initialize() {
+
+  // Create the map.
+  var mapOptions = {
+    zoom: 4,
+    center: new google.maps.LatLng(37.09024, -95.712891),
+    mapTypeId: google.maps.MapTypeId.TERRAIN
+  };
+
+  var map = new google.maps.Map(document.getElementById('canvas-map'), mapOptions);
+
+  // Construct the circle for each value in citymap.
+  // Note: We scale the area of the circle based on the population.
+  var i = 0, firstData;
+  for (var city in citymap) {
+    
+    marker = new google.maps.Marker({
+      position: citymap[city].center,
+      map: map,
+      draggable:true,
+      animation: google.maps.Animation.DROP,
+      title: 'Hello World!'
+    });
+    //console.log(marker[city]);
+    addBounce(marker,city);
+    if (i === 0){
+      firstData = citymap[city].center;
+    }
+    flightPlanCoordinates[i++] = citymap[city].center;
+  }
+  flightPlanCoordinates[i++] = firstData;
+
+  console.log(flightPlanCoordinates);
+
+  flightPath = new google.maps.Polyline({
+    path: flightPlanCoordinates,
+    geodesic: true,
+    strokeColor: '#FF0000',
+    strokeOpacity: 1.0,
+    strokeWeight: 2
+  });
+
+  flightPath.setMap(map);
+  
+
+}
+
+function addBounce(marker,city){
+  var message = ['chicago', 'newyork', 'losangeles', 'vancouver'];
+  var infowindow = new google.maps.InfoWindow({
+    content: city
+  });
+
+  infowindow.open(marker.get('map'), marker);
+
+  google.maps.event.addListener(marker, 'click', function() {
+    console.log("inside click");
+    marker.setAnimation(google.maps.Animation.BOUNCE);
+    //toggleBounce();
+  });
+
+  google.maps.event.addListener(marker, 'dbclick', function() {
+    console.log("inside double click");
+    marker.setAnimation(google.maps.Animation.DROP);
+    //toggleBounce();
+  });
+}
+
+function toggleBounce() {
+    flightPath.setMap(null);
+    console.log(flightPath);
+  
+}
+
+google.maps.event.addDomListener(window, 'load', initialize);
+
+
+
+
+    </script>
+  </head>
+  <body>
+    <table class="lamp">
+    <tr>
+      <td>
+        <div id="panel">
+          <b>Attacker: </b>
+        </div>
+        <div id="canvas-map"></div>
+      </td>
+
+      <td>
+        <div id="panel">
+          <b>Defender: </b>
+        </div>
+        <div id="canvas-info"></div>
+      </td>
+    </tr>
+    
+  </body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Grid Security Game</title>
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+
+  <script type='text/javascript' src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true"></script>
+
+  <link rel="stylesheet" href="mapData.css">
+  <script src="mapData.js"></script>
+  <script src="drawData.js"></script>
+  <script src="VectorNew.js"></script>
+</head>
+<script type="text/javascript">
+function callUpdateParticles(){
+  var randomNum = Math.floor(Math.random() * 10) + 1;
+  //console.log("randomNum=" + randomNum);
+  if(protectedNode.indexOf(randomNum) < 0) {
+    protectedNode.push(randomNum);  
+  } else{
+    setTimeout(updateDefend,10);
+  }
+  console.log("protectedNode=" + protectedNode);
+  updateParticles(randomNum);
+}
+</script>
+<body>
+
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#"><b>Grid Security Game</b></a>
+      </div>
+      <div id="navbar" class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="graphFile.html">Results</a></li>
+          <li><a href="#about">Team</a></li>
+        </ul>
+      </div><!--/.nav-collapse -->
+    </div>
+  </nav>
+
+  <div class="container-fluid" id="main">
+    <div class="row">
+      <div class="col-md-6" id="left" style="top:50px">
+    
+        
+        <div class="panel panel-default">
+          <canvas id="myCanvas" width="400" height="250" ></canvas>
+          <body onload="RunPhysics()">
+        </div>
+        <!-- item list -->
+        <div class="panel panel-default">
+          <div class="panel-heading"><a href=""> Defender's Actions</a>
+            <button type="button" class="btn btn-primary btn-md" onclick="updateDefend()">Defend</button>
+            <button type="button" class="btn btn-primary btn-md" onclick="updateDetect()">Detect</button>
+          </div>
+          <div class="panel-body">
+            <h5>Payoff</h5>
+            <input type="text" id="defenderPayoff" class="form-control"></input>
+          </div>
+        </div>
+        
+      
+        <div class="panel panel-default">
+          <div class="panel-heading"><a href="">Attacker's Actions</a>
+            <button type="button" class="btn btn-primary btn-md" onclick="updateDestroy()">Destroy</button>
+            <button type="button" class="btn btn-primary btn-md" onclick="updateSpread()">Spread</button>
+          </div>
+          <div class="panel-body">
+            <h5>Payoff</h5>
+            <input type="text" id="attackerPayoff" class="form-control"></input>
+          </div>
+        </div>
+      
+        <hr>
+      </div>
+      <div class="col-lg-6 map">
+        
+        <div class="google-map-canvas" id="map-canvas"></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

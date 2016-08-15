@@ -1,0 +1,31 @@
+<style>
+#panel {
+    background-color:black;
+    color:white;
+    text-align:center;
+    padding:5px;
+}
+#canvas-map {
+    line-height:30px;
+    background-color:#eeeeee;
+    height: 480px;
+    width: 640px;
+    float:left;
+    padding:5px;
+}
+#canvas-info {
+    width:100px;
+    float:left;
+    padding:50px;
+}
+table.lamp {
+    width:50%;
+    border:1px solid #d4d4d4;
+}
+table.lamp th, td { 
+    padding:10px;
+}
+table.lamp th {
+    width:40px;
+}
+</style>

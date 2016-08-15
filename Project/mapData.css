@@ -1,0 +1,39 @@
+/*
+A custom Bootstrap 3.1 theme from http://bootply.com\
+
+This CSS code should follow the 'bootstrap.css'
+in your HTML file.
+
+license: MIT
+author: bootply.com
+*/
+
+
+html, body, .container-fluid, .row, .map { height: 100% }
+
+body{
+    padding-top:5px; /*padding for navbar*/
+}
+
+#main, #main>.row {
+  height:100%;
+}
+
+#main>.row {
+    overflow-y:scroll;
+}
+
+#left {
+  height:100%;
+}
+
+#map-canvas {
+  width:90%;
+  height:90%;
+  position:absolute;
+  right:0;
+  left: 0;
+  top:60px;
+  bottom:0;
+ 
+}
